@@ -12,7 +12,12 @@ Após criar o sprite, vamos escrevê-lo no código. Adicione o seguinte no corpo
 
 ```lua
 -- Preenche a tela com uma cor de fundo roxa
-screen.fillRect(0, 0, screen.width, screen.height, "rgb(57,0,57)") 
+screen.fillRect(0, 0, screen.width, screen.height, "rgb(57,0,57)")
+-- O primeiro 0 é onde começa o retângulo (em X)
+-- O segundo 0 é onde ele começa em Y
+-- o terceiro é a largura
+-- o quarto é a altura
+-- a cor do retângulo
 
 -- Desenha o personagem na tela nas coordenadas (-80, -50) com uma escala de 20
 -- "hero" é o nome do sprite que foi criado
