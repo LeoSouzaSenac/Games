@@ -72,6 +72,51 @@ for i = -6 to 6 by 1
 end
 ```
 
+### O que é `position % 40`?
+
+O operador `position % 40` calcula o **resto da divisão** de `position` por 40. Isso cria um comportamento interessante, pois o valor de `position` está sempre sendo **incrementado**, mas o operador `% 40` garante que o valor de `position` seja **limitado a um intervalo entre 0 e 39**. O resto da divisão de qualquer número por 40 vai sempre retornar um valor entre **0** e **39**.
+
+#### Exemplo de como funciona `position % 40`:
+
+Vamos supor que `position` vai sendo incrementada ao longo do tempo, como mostrado no código do jogo:
+
+1. **Quando `position = 0`:**
+   - `0 % 40 = 0`
+   - O valor de `position % 40` é **0** no início.
+
+2. **Quando `position = 1`:**
+   - `1 % 40 = 1`
+   - O valor de `position % 40` é **1**.
+
+3. **Quando `position = 40`:**
+   - `40 % 40 = 0`
+   - O valor de `position % 40` é **0** novamente, porque 40 é divisível por 40.
+
+4. **Quando `position = 41`:**
+   - `41 % 40 = 1`
+   - O valor de `position % 40` volta a ser **1**.
+
+5. **Quando `position = 79`:**
+   - `79 % 40 = 39`
+   - O valor de `position % 40` é **39**.
+
+6. **Quando `position = 80`:**
+   - `80 % 40 = 0`
+   - O valor de `position % 40` volta a ser **0**.
+
+#### O que isso significa para o movimento das plataformas?
+
+Esse cálculo `position % 40` cria um efeito de **looping**, fazendo com que as plataformas se movam de forma contínua e **se reposicionem** à medida que a tela se desloca para a esquerda.
+
+- Sem o `% 40`, se você apenas usasse `i * 40 - position`, as plataformas iriam desaparecer à esquerda da tela, porque o valor de `position` ficaria cada vez maior e as plataformas sairiam da tela sem ser reposicionadas.
+  
+- **Com o `% 40`**, a posição das plataformas vai se "reiniciar" sempre que `position` alcançar um múltiplo de 40 (por exemplo, quando `position` chega a 40, 80, 120, etc.). Isso faz com que as plataformas sejam redesenhadas à direita da tela, criando uma ilusão de **scrolling infinito**.
+
+### Resumo:
+
+O operador **`position % 40`** calcula o resto da divisão de `position` por 40 e garante que a posição das plataformas seja ajustada de maneira cíclica à medida que o valor de `position` aumenta. Isso cria um efeito de **scrolling contínuo**, onde as plataformas desaparecem pela esquerda e reaparecem à direita da tela, sem interrupção, criando a ilusão de um mundo "infinito" no jogo.
+
+
 Agora, no corpo da função `update`, acrescente:
 
 ```lua
@@ -154,10 +199,59 @@ Além disso, altere o cálculo de `player_y` para garantir que ele nunca ultrapa
 ```lua
 -- Impede que o personagem ultrapasse o chão (posição negativa)
 player_y = max(0, player_y + player_vy)
+-- A função max retorna o maior valor entre dois números
 ```
 
 #### Explicação de `max(0, player_y + player_vy)`:
 - **max(0, valor)**: A função `max` garante que `player_y` nunca seja negativo, ou seja, o personagem não cairá abaixo da plataforma.
+
+
+A função `max(a, b)` recebe dois parâmetros e retorna o maior entre eles.
+
+## Parâmetros da Função `max()`
+
+### Primeiro parâmetro: `0`
+
+Este é o valor **mínimo permitido** para a variável `player_y`, ou seja, o valor **não pode ser menor que 0**. Isso é importante porque a posição `y` do personagem no eixo vertical não deve ser negativa (o personagem não deve "desaparecer" para fora da tela para cima). Esse valor atua como um **limite inferior**.
+
+### Segundo parâmetro: `player_y + player_vy`
+
+Este valor representa a **nova posição vertical do jogador** (após a adição da velocidade vertical `player_vy`).
+- `player_y` é a **posição atual** do jogador no eixo vertical (a altura em que ele se encontra na tela).
+- `player_vy` é a **velocidade vertical** do jogador, que pode ser positiva (movendo para cima, no caso de um pulo) ou negativa (movendo para baixo, devido à gravidade).
+
+A soma de `player_y + player_vy` calcula a **nova posição** do personagem no eixo vertical com base na sua velocidade.
+
+## O que acontece nessa linha?
+
+A linha de código:
+
+```lua
+player_y = max(0, player_y + player_vy)
+```
+
+- `player_y + player_vy` calcula a **nova posição vertical** do personagem.
+- A função `max(0, player_y + player_vy)` garante que, caso o cálculo de `player_y + player_vy` seja **menor que 0**, o valor retornado será **0**. Isso significa que o personagem nunca poderá "atravessar" o chão (o limite inferior da tela).
+- Se **`player_y + player_vy`** for **maior ou igual a 0**, o valor de `player_y` será atualizado normalmente com o novo valor da soma.
+
+## Exemplo de Funcionamento:
+
+### Caso 1: O personagem está em cima da plataforma (`player_y = 0`) e a gravidade está atuando (`player_vy = -1`):
+
+- `player_y + player_vy = 0 + (-1) = -1`
+- A função `max(0, -1)` vai retornar **0**, impedindo que `player_y` se torne negativa (o personagem não "cai" abaixo da plataforma).
+- **Resultado**: `player_y` vai se manter em **0** (o personagem está no chão).
+
+### Caso 2: O personagem está no ar e pulando (`player_y = 10`, `player_vy = -2`):
+
+- `player_y + player_vy = 10 + (-2) = 8`
+- A função `max(0, 8)` vai retornar **8**, porque **8** é maior que **0**.
+- **Resultado**: `player_y` vai ser atualizado para **8**, o que faz o personagem continuar descendo até alcançar o chão (0).
+
+## Conclusão
+
+A função `max(0, player_y + player_vy)` garante que o personagem não ultrapasse a linha do chão (não caia para fora da tela) ao limitar o valor de `player_y` para 0 no caso de quedas.
+
 
 ---
 
@@ -223,16 +317,14 @@ for i = 0 to blades.length - 1
     -- Se o personagem ultrapassou o obstáculo, ele ganha 1 ponto
     elsif not passed[i] then
       passed[i] = 1
-      score = score +
-
- 1
+      score = score + 1
     end
   end
 end
 ```
 
 #### Explicação de `abs(position - blades[i]) < 10`:
-- **abs()**: A função `abs` calcula o valor absoluto da diferença entre a posição do personagem e o obstáculo. Se a diferença for menor que 10, considera-se que o personagem está colidindo com o obstáculo.
+- **abs()**: A função `abs` calcula o valor da diferença entre a posição do personagem e o obstáculo. Se a diferença for menor que 10, considera-se que o personagem está colidindo com o obstáculo.
 
 ---
 
