@@ -46,6 +46,11 @@ for i = -6 to 6 by 1
   screen.drawSprite("platform", i * 40, -80, 40)
 end
 ```
+#### Explicação do for:
+- **for i = -6**: O laço começa com a variável i recebendo o valor de -6. Isso significa que a primeira iteração do laço começa com i igual a -6.
+- **to 6**: O laço irá continuar até que i atinja o valor de 6, incluindo esse valor. Ou seja, o laço vai repetir até i ser igual a 6.
+- **by 1**: O by 1 especifica o incremento (ou passo) entre cada iteração. Neste caso, significa que a cada iteração i será aumentado em 1. Portanto, a sequência de valores de i será: -6, -5, -4, ..., 6.
+
 
 #### Explicação dos parâmetros de `screen.drawSprite`:
 - **"platform"**: Nome do sprite da plataforma.
