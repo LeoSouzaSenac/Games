@@ -20,12 +20,12 @@ screen.fillRect(0, 0, screen.width, screen.height, "rgb(57,0,57)")
 -- a cor do retângulo
 
 -- Desenha o personagem na tela nas coordenadas (-80, -50) com uma escala de 20
--- "hero" é o nome do sprite que foi criado
-screen.drawSprite("hero", -80, -50, 20)
+-- "player" é o nome do sprite que foi criado
+screen.drawSprite("player", -80, -50, 20)
 ```
 
 #### Explicação dos parâmetros de `screen.drawSprite`:
-- **"hero"**: Nome do sprite que será desenhado.
+- **"player"**: Nome do sprite que será desenhado.
 - **-80**: Posição horizontal do sprite (em pixels).
 - **-50**: Posição vertical do sprite (em pixels).
 - **20**: Escala do sprite, determinando o tamanho na tela.
@@ -68,7 +68,7 @@ Para fazer as plataformas se moverem, vamos introduzir a variável `position`. M
 -- Desenha as plataformas se movendo para a esquerda
 for i = -6 to 6 by 1
   -- O valor position % 40 garante que a plataforma se reposicione quando sai da tela
-  screen.drawSprite("wall", i * 40 - position % 40, -80, 40)
+  screen.drawSprite("platform", i * 40 - position % 40, -80, 40)
 end
 ```
 
@@ -125,7 +125,7 @@ position = position + 2
 ```
 
 #### Explicação dos parâmetros de `screen.drawSprite`:
-- **"wall"**: Nome do sprite da plataforma.
+- **"platform"**: Nome do sprite da plataforma.
 - **i * 40 - position % 40**: A posição horizontal é alterada pela variável `position`, criando o movimento contínuo.
 - **-80**: Posição vertical fixa das plataformas.
 - **40**: Escala da plataforma.
