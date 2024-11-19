@@ -11,11 +11,19 @@ Primeiro, vamos criar um personagem para o nosso jogo. Clique em **Sprites** e a
 Após criar o sprite, vamos escrevê-lo no código. Adicione o seguinte no corpo da função `draw`:
 
 ```lua
-screen.fillRect(0, 0, screen.width, screen.height, "rgb(57,0,57)")
+-- Preenche a tela com uma cor de fundo roxa
+screen.fillRect(0, 0, screen.width, screen.height, "rgb(57,0,57)") 
+
+-- Desenha o personagem na tela nas coordenadas (-80, -50) com uma escala de 20
+-- "hero" é o nome do sprite que foi criado
 screen.drawSprite("hero", -80, -50, 20)
 ```
 
-Esse código vai desenhar o nosso personagem na tela. A função `screen.drawSprite` vai desenhar o sprite com o nome `"hero"` nas coordenadas fornecidas.
+#### Explicação dos parâmetros de `screen.drawSprite`:
+- **"hero"**: Nome do sprite que será desenhado.
+- **-80**: Posição horizontal do sprite (em pixels).
+- **-50**: Posição vertical do sprite (em pixels).
+- **20**: Escala do sprite, determinando o tamanho na tela.
 
 ---
 
@@ -26,12 +34,19 @@ Vamos adicionar uma plataforma para o personagem correr. Crie um novo sprite e r
 No corpo da função `draw`, adicione:
 
 ```lua
+-- Desenha várias plataformas em uma linha contínua
 for i = -6 to 6 by 1
+  -- A cada iteração, desenha uma plataforma deslocada em 40 pixels (i*40) horizontalmente
+  -- "platform" é o nome do sprite da plataforma, -80 é a altura fixa das plataformas
   screen.drawSprite("platform", i * 40, -80, 40)
 end
 ```
 
-Agora, o seu jogo tem uma plataforma que se estende de ponta a ponta na tela.
+#### Explicação dos parâmetros de `screen.drawSprite`:
+- **"platform"**: Nome do sprite da plataforma.
+- **i * 40**: Posição horizontal do sprite, que varia a cada iteração, criando um efeito de repetição.
+- **-80**: Posição vertical fixa das plataformas.
+- **40**: Escala da plataforma, com largura de 40 pixels.
 
 ---
 
@@ -40,16 +55,25 @@ Agora, o seu jogo tem uma plataforma que se estende de ponta a ponta na tela.
 Para fazer as plataformas se moverem, vamos introduzir a variável `position`. Mude o código dentro de `draw` para:
 
 ```lua
-screen.drawSprite("wall", i * 40 - position % 40, -80, 40)
+-- Desenha as plataformas se movendo para a esquerda
+for i = -6 to 6 by 1
+  -- O valor position % 40 garante que a plataforma se reposicione quando sai da tela
+  screen.drawSprite("wall", i * 40 - position % 40, -80, 40)
+end
 ```
 
 Agora, no corpo da função `update`, acrescente:
 
 ```lua
+-- Incrementa o valor de position a cada atualização, fazendo as plataformas se moverem
 position = position + 2
 ```
 
-Com isso, as plataformas vão se mover para a esquerda. A variável `position % 40` faz com que a plataforma se reposicione quando chega ao fim da tela, criando uma ilusão de movimento contínuo.
+#### Explicação dos parâmetros de `screen.drawSprite`:
+- **"wall"**: Nome do sprite da plataforma.
+- **i * 40 - position % 40**: A posição horizontal é alterada pela variável `position`, criando o movimento contínuo.
+- **-80**: Posição vertical fixa das plataformas.
+- **40**: Escala da plataforma.
 
 ---
 
@@ -63,16 +87,22 @@ Agora, vamos adicionar a funcionalidade de pulo! Para isso, crie duas variáveis
 No corpo da função `draw`, altere o código para:
 
 ```lua
+-- Desenha o personagem, levando em conta a posição vertical (player_y)
 screen.drawSprite("player", -80, -50 + player_y, 20)
 ```
 
 Agora, no corpo da função `update`, adicione:
 
 ```lua
+-- Atualiza a posição vertical do personagem a cada quadro, com base na sua velocidade
 player_y = player_y + player_vy
 ```
 
-A variável `player_vy` vai controlar a velocidade de subida e descida do personagem.
+#### Explicação dos parâmetros de `screen.drawSprite`:
+- **"player"**: Nome do sprite do personagem.
+- **-80**: Posição horizontal fixa do personagem.
+- **-50 + player_y**: Posição vertical variável, alterada pela velocidade vertical.
+- **20**: Escala do personagem.
 
 ---
 
@@ -83,12 +113,18 @@ Vamos fazer o personagem pular quando o mouse for clicado ou a tecla **espaço**
 Adicione o seguinte código na função `update` para iniciar o pulo:
 
 ```lua
+-- Verifica se o mouse foi clicado ou se a tecla "espaço" foi pressionada
+-- Se o personagem estiver no chão (player_y == 0), ele começa a pular
 if touch.touching and player_y == 0 then
-  player_vy = 7
+  player_vy = 7  -- Define a velocidade de pulo (velocidade vertical positiva)
 end
 ```
 
-Esse código permite que o personagem pule se ele estiver no chão (quando `player_y == 0`).
+#### Explicação de `touch.touching`:
+- **touch.touching**: Verifica se o mouse está tocando na tela (clicado).
+
+#### Explicação de `keyboard.JUMP` (alternativo):
+- **keyboard.JUMP**: Verifica se a tecla "espaço" foi pressionada.
 
 ---
 
@@ -99,16 +135,19 @@ Agora, o personagem precisa cair de volta. Para isso, vamos aplicar a gravidade,
 Adicione este código na função `update`:
 
 ```lua
+-- Aplica a gravidade subtraindo uma pequena constante da velocidade vertical
 player_vy = player_vy - 0.3
 ```
 
 Além disso, altere o cálculo de `player_y` para garantir que ele nunca ultrapasse o chão:
 
 ```lua
+-- Impede que o personagem ultrapasse o chão (posição negativa)
 player_y = max(0, player_y + player_vy)
 ```
 
-Com isso, o personagem vai cair de volta ao chão após pular.
+#### Explicação de `max(0, player_y + player_vy)`:
+- **max(0, valor)**: A função `max` garante que `player_y` nunca seja negativo, ou seja, o personagem não cairá abaixo da plataforma.
 
 ---
 
@@ -117,14 +156,18 @@ Com isso, o personagem vai cair de volta ao chão após pular.
 Vamos adicionar alguns obstáculos (como lâminas) que o personagem precisa evitar. Primeiro, crie um novo sprite para os obstáculos e adicione este código na função `init`:
 
 ```lua
+-- Cria um array com a posição inicial dos obstáculos
 blades = [200, 300, 400]
+-- Array para controlar se o obstáculo foi ultrapassado com sucesso
 passed = [0, 0, 0]
 ```
 
 Agora, adicione o seguinte código no corpo da função `update` para movimentar os obstáculos:
 
 ```lua
+-- Move os obstáculos da direita para a esquerda
 for i = 0 to blades.length - 1
+  -- Quando um obstáculo ultrapassa o personagem, reposiciona ele à direita
   if blades[i] < position - 120 then
     blades[i] = position + 280 + random.next() * 200
     passed[i] = 0
@@ -132,7 +175,8 @@ for i = 0 to blades.length - 1
 end
 ```
 
-Este código move os obstáculos para a esquerda, e quando um obstáculo sai da tela, ele reaparece à direita.
+#### Explicação de `random.next()`:
+- **random.next()**: Gera um número aleatório entre 0 e 1, usado para randomizar a posição dos obstáculos.
 
 ---
 
@@ -141,12 +185,17 @@ Este código move os obstáculos para a esquerda, e quando um obstáculo sai da 
 Agora, vamos exibir os obstáculos na tela. Adicione o seguinte código na função `draw`:
 
 ```lua
+-- Desenha cada obstáculo na tela, com base nas posições do array "blades"
 for i = 0 to blades.length - 1
   screen.drawSprite("ouch", blades[i] - position - 80, -50, 20)
 end
 ```
 
-Esse código desenha os obstáculos na tela, e eles vão se mover à medida que a variável `position` é atualizada.
+#### Explicação dos parâmetros de `screen.drawSprite`:
+- **"ouch"**: Nome do sprite do obstáculo.
+- **blades[i] - position - 80**: A posição horizontal dos obstáculos é calculada com base na variável `position`, garantindo o movimento.
+- **-50**: Posição vertical fixa dos obstáculos.
+- **20**: Escala do obstáculo.
 
 ---
 
@@ -155,19 +204,25 @@ Esse código desenha os obstáculos na tela, e eles vão se mover à medida que 
 Vamos verificar se o personagem colide com os obstáculos. Adicione o seguinte código na função `update`:
 
 ```lua
+-- Verifica se o personagem está perto de um obstáculo
 for i = 0 to blades.length - 1
   if abs(position - blades[i]) < 10 then
+    -- Se o personagem estiver no chão (player_y < 10), o jogo acaba
     if player_y < 10 then
       gameover = 1
+    -- Se o personagem ultrapassou o obstáculo, ele ganha 1 ponto
     elsif not passed[i] then
       passed[i] = 1
-      score = score + 1
+      score = score +
+
+ 1
     end
   end
 end
 ```
 
-Aqui, verificamos se o personagem está perto de um obstáculo e se ele não está pulando. Se colidir, o jogo termina.
+#### Explicação de `abs(position - blades[i]) < 10`:
+- **abs()**: A função `abs` calcula o valor absoluto da diferença entre a posição do personagem e o obstáculo. Se a diferença for menor que 10, considera-se que o personagem está colidindo com o obstáculo.
 
 ---
 
@@ -176,10 +231,16 @@ Aqui, verificamos se o personagem está perto de um obstáculo e se ele não est
 Adicione este código na função `draw` para mostrar a pontuação do jogador:
 
 ```lua
+-- Exibe a pontuação na tela, na posição (120, 80)
 screen.drawText(score, 120, 80, 20, "#FFF")
 ```
 
-A pontuação será incrementada sempre que o personagem pular sobre um obstáculo com sucesso.
+#### Explicação dos parâmetros de `screen.drawText`:
+- **score**: A variável que contém a pontuação atual do jogador.
+- **120**: Posição horizontal do texto.
+- **80**: Posição vertical do texto.
+- **20**: Tamanho da fonte.
+- **"#FFF"**: Cor do texto (branco).
 
 ---
 
@@ -188,13 +249,12 @@ A pontuação será incrementada sempre que o personagem pular sobre um obstácu
 Quando o jogador colidir com um obstáculo, vamos exibir a tela de **Game Over**. Adicione este código na função `draw`:
 
 ```lua
+-- Se o jogo acabou, exibe a tela de Game Over
 if gameover then
-  screen.fillRect(0, 0, screen.width, screen.height, "rgba(255, 0, 0, .5)")
-  screen.drawText("GAME OVER", 0, 0, 50, "#FFF")
+  screen.fillRect(0, 0, screen.width, screen.height, "rgba(255, 0, 0, .5)")  -- Cor de fundo semi-transparente
+  screen.drawText("GAME OVER", 0, 0, 50, "#FFF")  -- Exibe "GAME OVER" no centro da tela
 end
 ```
-
-A tela de **Game Over** ficará semi-transparente, cobrindo a interface do jogo.
 
 ---
 
@@ -203,15 +263,14 @@ A tela de **Game Over** ficará semi-transparente, cobrindo a interface do jogo.
 Quando o jogo terminar, ele precisa reiniciar após 5 segundos. Adicione este código na função `update`:
 
 ```lua
+-- Se o jogo acabou, reinicia após 5 segundos
 if gameover > 0 then
   gameover = gameover + 1
-  if gameover > 300 then init() end
+  if gameover > 300 then init() end  -- Chama a função init para reiniciar o jogo
 else
-  -- código do jogo
+  -- Código normal do jogo
 end
 ```
-
-Isso vai reiniciar o jogo 5 segundos após o game over.
 
 ---
 
@@ -220,12 +279,11 @@ Isso vai reiniciar o jogo 5 segundos após o game over.
 Para aumentar a dificuldade do jogo conforme o tempo passa, vamos acelerar o movimento das plataformas e obstáculos. Adicione a variável `speed` e modifique o código dentro da função `update`:
 
 ```lua
+-- Aumenta a velocidade das plataformas e obstáculos gradualmente
 speed = 2
-position = position + speed
-speed = speed + 0.001
+position = position + speed  -- Move as plataformas
+speed = speed + 0.001  -- Aumenta a velocidade com o tempo
 ```
-
-Com isso, a velocidade do jogo vai aumentar ao longo do tempo.
 
 ---
 
@@ -233,20 +291,11 @@ Com isso, a velocidade do jogo vai aumentar ao longo do tempo.
 
 Seu jogo está agora completo! Você tem um personagem que pula, obstáculos que se movem e uma tela de game over que aparece quando o jogador perde.
 
-Abaixo está o fluxo básico do jogo:
-
-```plaintext
-Início → Personagem aparece → Plataformas se movem → Obstáculos surgem → Pulo do personagem → Game Over (se colidir) → Reinício
-```
-
 ---
 
 ## Conclusão
 
 Agora você tem um jogo básico em Microstudio com um personagem que pula e tenta evitar obstáculos. Com menos de 70 linhas de código, você aprendeu a criar interatividade, animações, e lógica de jogo! Divirta-se personalizando ainda mais o seu jogo.
-
-![Imagem do Jogo](https://example.com/imagem_do_jogo.png)  
-(Imagem ilustrativa do jogo)
 
 ---
 
@@ -254,4 +303,3 @@ Agora você tem um jogo básico em Microstudio com um personagem que pula e tent
 
 - [Microstudio Documentation](https://microstudio.dev/docs)
 - [Exemplos de Jogos Criados no Microstudio](https://microstudio.dev/examples)
-
